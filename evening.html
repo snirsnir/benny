@@ -404,16 +404,24 @@ body {
   object-fit:contain;
   background:#000;
 }
+#video-bottom-bar {
+  position:fixed; bottom:22px; left:50%; transform:translateX(-50%);
+  z-index:60;
+  display:flex; align-items:center; gap:20px;
+  opacity:0; pointer-events:none;
+  transition:opacity 0.4s ease;
+}
+#screen-video.active #video-bottom-bar { opacity:1; pointer-events:all; }
+
 #video-badge {
-  position:fixed; bottom:22px; right:50%; transform:translateX(50%);
   background:rgba(0,0,0,0.6);
   color:rgba(255,255,255,0.6);
   font-size:0.85rem;
   padding:6px 18px;
   border-radius:20px;
-  z-index:60;
   backdrop-filter:blur(6px);
   border:1px solid rgba(255,255,255,0.1);
+  white-space:nowrap;
 }
 
 /* video side arrows */
@@ -443,8 +451,6 @@ body {
 #btn-vid-back  { left:14px; }
 #btn-vid-fwd   { right:14px; }
 #btn-vid-goback {
-  position:fixed; bottom:70px; left:50%; transform:translateX(-50%);
-  z-index:60;
   background:rgba(0,0,0,0.45);
   border:1px solid rgba(255,255,255,0.18);
   color:#fff; padding:12px 32px;
@@ -454,10 +460,9 @@ body {
   font-family:'Rubik',Arial,sans-serif;
   display:flex; align-items:center; gap:8px;
   backdrop-filter:blur(8px);
-  opacity:0; pointer-events:none;
-  transition:opacity 0.4s ease, background 0.15s;
+  transition:background 0.15s;
+  white-space:nowrap;
 }
-#screen-video.active #btn-vid-goback { opacity:1; pointer-events:all; }
 #btn-vid-goback:hover { background:rgba(0,0,0,0.72); }
 
 /* ══════════════════════════════════════════
@@ -683,14 +688,16 @@ body {
 ══════════════════════════════════════════ -->
 <div class="screen" id="screen-video">
   <video id="family-video" src="familyMovie.mp4" playsinline></video>
-  <div id="video-badge">הסרטון שהמשפחה הכינה לבני ❤️</div>
+  <div id="video-bottom-bar">
+    <button id="btn-vid-goback" onclick="goBack()">◀ חזרה לשקופית הקודמת</button>
+    <div id="video-badge">הסרטון שהמשפחה הכינה לבני ❤️</div>
+  </div>
   <button class="vid-side-btn" id="btn-vid-back" onclick="vidSeek(-30)">
     ◀◀<span class="label">30 שנ׳</span>
   </button>
   <button class="vid-side-btn" id="btn-vid-fwd" onclick="vidSkip()">
     ▶▶<span class="label">דלג</span>
   </button>
-  <button id="btn-vid-goback" onclick="goBack()">◀ חזרה לשקופית הקודמת</button>
 </div>
 
 <!-- ══════════════════════════════════════════
