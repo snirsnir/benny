@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>בני מאניה 🎯</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background:#060010; width:100vw; height:100vh;
+  overflow:hidden;
+  font-family:'Rubik','Arial Hebrew',Arial,sans-serif;
+  user-select:none; direction:rtl;
+}
+
+/* ── SLIDESHOW SLOTS ── */
+.bg-slot {
+  position:fixed; inset:0; z-index:0; opacity:0;
+  transition:opacity 1.2s ease-in-out;
+  display:flex; gap:6px;
+}
+.bg-slot.active { opacity:1; }
+.bg-slot img { flex:1; min-width:0; height:100%; object-fit:cover; object-position:center 20%; will-change:transform; }
+
+/* ── KEN BURNS ── */
+@keyframes kb0{from{transform:translate(0,0)}to{transform:translate(-1.2%,-0.4%)}}
+@keyframes kb1{from{transform:translate(1.2%,0.4%)}to{transform:translate(0,0)}}
+@keyframes kb2{from{transform:translate(-1.8%,0)}to{transform:translate(1.8%,0)}}
+@keyframes kb3{from{transform:translate(1.8%,0)}to{transform:translate(-1.8%,0)}}
+@keyframes kb4{from{transform:translate(0,1.2%)}to{transform:translate(0,-1.2%)}}
+@keyframes kb5{from{transform:translate(-1%,1%)}to{transform:translate(1%,-1%)}}
+@keyframes kb6{from{transform:translate(0.5%,-0.8%)}to{transform:translate(-0.5%,0.8%)}}
+@keyframes kb7{from{transform:translate(1%,0.5%)}to{transform:translate(-1%,-0.5%)}}
+.kb-0{animation:kb0 var(--dur,5s) ease-in-out forwards;}
+.kb-1{animation:kb1 var(--dur,5s) ease-in-out forwards;}
+.kb-2{animation:kb2 var(--dur,5s) ease-in-out forwards;}
+.kb-3{animation:kb3 var(--dur,5s) ease-in-out forwards;}
+.kb-4{animation:kb4 var(--dur,5s) ease-in-out forwards;}
+.kb-5{animation:kb5 var(--dur,5s) ease-in-out forwards;}
+.kb-6{animation:kb6 var(--dur,5s) ease-in-out forwards;}
+.kb-7{animation:kb7 var(--dur,5s) ease-in-out forwards;}
+
+/* ── GRADIENT OVERLAY ── */
+#grad-overlay {
+  position:fixed; inset:0; z-index:1; pointer-events:none;
+  background:linear-gradient(to bottom, rgba(0,0,10,0.3) 0%, rgba(0,0,10,0.6) 100%);
+}
+
+/* ── DIM OVERLAY (question mode) ── */
+#dim-overlay {
+  position:fixed; inset:0; z-index:5;
+  background:rgba(0,0,10,0); pointer-events:none;
+  transition:background 0.6s ease;
+}
+#dim-overlay.on { background:rgba(0,0,10,0.88); }
+
+/* ── SUBTITLE ── */
+#subtitle {
+  position:fixed; bottom:22px; left:0; right:0;
+  text-align:center; z-index:50; pointer-events:none;
+  padding:0 10vw; direction:rtl;
+  opacity:0; transition:opacity 0.4s ease;
+}
+#subtitle.visible { opacity:1; }
+#lyric-text {
+  display:inline-block;
+  background:rgba(0,0,0,0.7); color:#fbbf24;
+  font-size:clamp(1.7rem,3.8vw,2.8rem); font-weight:700;
+  padding:9px 26px; border-radius:10px;
+  text-shadow:0 0 16px rgba(251,191,36,0.55), 0 1px 6px rgba(0,0,0,0.9);
+  line-height:1.5; backdrop-filter:blur(6px);
+  border:1px solid rgba(251,191,36,0.2); max-width:900px;
+}
+@keyframes lyricPop{
+  0%{opacity:0;transform:translateY(14px)scale(0.94);}
+  65%{transform:translateY(-3px)scale(1.03);}
+  100%{opacity:1;transform:translateY(0)scale(1);}
+}
+#lyric-text.popin{animation:lyricPop 0.35s cubic-bezier(0.175,0.885,0.32,1.275) forwards;}
+
+/* ── SCREENS ── */
+.screen {
+  position:fixed; inset:0; z-index:20;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:22px;
+  opacity:0; pointer-events:none;
+  transition:opacity 0.7s ease;
+}
+.screen.active { opacity:1; pointer-events:all; }
+#screen-welcome { justify-content:flex-start; padding-top:clamp(40px,9vh,100px); }
+
+/* ── BUTTONS ── */
+.btn-main {
+  background:linear-gradient(135deg,#7c3aed,#4f46e5);
+  color:#fff; border:none; padding:16px 60px;
+  font-size:clamp(1.2rem,2.5vw,1.6rem); font-weight:700;
+  border-radius:60px; cursor:pointer;
+  font-family:'Rubik',Arial,sans-serif;
+  box-shadow:0 6px 28px rgba(124,58,237,0.55);
+  transition:transform 0.15s, box-shadow 0.15s;
+}
+.btn-main:hover{transform:scale(1.06);box-shadow:0 10px 40px rgba(124,58,237,0.75);}
+.btn-main:active{transform:scale(0.97);}
+
+/* ════════════════════════════
+   WELCOME
+════════════════════════════ */
+.wlc-logo {
+  font-size:clamp(3.5rem,9vw,7.5rem); font-weight:900; text-align:center;
+  background:linear-gradient(135deg,#fbbf24 0%,#f59e0b 40%,#fbbf24 100%);
+  background-size:200% auto; -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent; background-clip:text;
+  animation:shine 4s linear infinite;
+  min-height:1.2em;
+}
+@keyframes shine{to{background-position:200% center;}}
+.wlc-sub-plain {
+  font-size:clamp(1.6rem,3.8vw,3rem); color:rgba(255,255,255,0.88);
+  font-weight:700;
+  text-align:center; max-width:min(860px,90vw); line-height:1.6;
+  min-height:1.6em;
+}
+.wlc-deep {
+  display:block; font-weight:900;
+  font-size:clamp(2.2rem,5.5vw,4.5rem);
+  letter-spacing:0.04em; text-align:center;
+  color:#fff; min-height:1.2em;
+}
+.wlc-deep.pulsing {
+  animation:deepPulse 2s ease-in-out infinite;
+}
+@keyframes deepPulse {
+  0%,100% {
+    color:#fff;
+    text-shadow:0 0 20px rgba(251,191,36,0.9),0 0 50px rgba(251,191,36,0.6),0 0 100px rgba(251,191,36,0.3);
+    transform:scale(1);
+  }
+  50% {
+    color:#fbbf24;
+    text-shadow:0 0 30px rgba(251,191,36,1),0 0 80px rgba(251,191,36,0.9),0 0 140px rgba(251,191,36,0.6),0 0 200px rgba(251,191,36,0.3);
+    transform:scale(1.1);
+  }
+}
+#wlc-btn-wrap { opacity:0; pointer-events:none; transition:opacity 0.8s ease; }
+
+/* ════════════════════════════
+   RULES
+════════════════════════════ */
+#screen-rules {
+  background:rgba(0,0,10,0.88);
+  backdrop-filter:blur(6px);
+  justify-content:flex-start;
+  padding:clamp(36px,6vh,72px) clamp(28px,6vw,90px) 30px;
+  gap:clamp(14px,2vh,26px);
+}
+.rules-title-big {
+  font-size:clamp(2.4rem,5.5vw,4.5rem); font-weight:900; color:#fbbf24;
+  text-align:center; min-height:1.2em;
+  text-shadow:0 0 30px rgba(251,191,36,0.4);
+}
+.rules-line {
+  font-size:clamp(1.25rem,2.8vw,2.1rem); color:rgba(255,255,255,0.9);
+  text-align:center; line-height:1.5; min-height:1.4em;
+  width:100%;
+}
+.rules-hl {
+  font-size:clamp(1.6rem,3.8vw,3rem); font-weight:900;
+  color:#fbbf24; text-align:center; min-height:1.3em;
+  text-shadow:0 0 20px rgba(251,191,36,0.5);
+}
+.rules-end {
+  font-size:clamp(1.25rem,2.8vw,2.1rem); font-weight:700;
+  color:#fff; text-align:center; min-height:1.4em;
+}
+.signs-row {
+  display:flex; gap:clamp(20px,4vw,60px); align-items:center;
+  transition:opacity 0.8s ease;
+}
+.sign-card {
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+  background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter:blur(8px); border-radius:18px; padding:20px 28px;
+}
+.sign-card img {
+  height:clamp(90px,14vh,150px); object-fit:contain;
+  transition:transform 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
+  cursor:pointer;
+}
+.sign-card img:hover { transform:scale(1.45); }
+.label-green { font-size:1.2rem; font-weight:700; color:#22c55e; }
+.label-red   { font-size:1.2rem; font-weight:700; color:#ef4444; }
+
+/* ════════════════════════════
+   PRIZE
+════════════════════════════ */
+#screen-prize {
+  background:rgba(0,0,10,0.88); backdrop-filter:blur(6px);
+  justify-content:flex-start;
+  padding:clamp(36px,6vh,72px) clamp(28px,6vw,90px) 30px;
+  gap:clamp(12px,1.8vh,22px);
+}
+.prize-title-type {
+  font-size:clamp(2.8rem,6vw,5rem); font-weight:900; color:#fbbf24;
+  text-align:center; min-height:1.2em;
+  text-shadow:0 0 30px rgba(251,191,36,0.4);
+}
+.prize-line {
+  font-size:clamp(1.45rem,3.2vw,2.5rem); color:rgba(255,255,255,0.88);
+  text-align:center; min-height:1.4em; line-height:1.5;
+}
+.prize-brand {
+  font-size:clamp(2.6rem,6.5vw,5.5rem); font-weight:900; text-align:center;
+  min-height:1.2em;
+  background:linear-gradient(135deg,#fbbf24 0%,#f59e0b 40%,#fbbf24 100%);
+  background-size:200% auto; -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent; background-clip:text;
+  animation:shine 4s linear infinite;
+}
+.prize-fine-type {
+  font-size:clamp(1.2rem,2.4vw,1.9rem); color:rgba(255,255,255,0.5);
+  font-style:italic; text-align:center; min-height:1.4em;
+}
+#prize-reveal {
+  display:flex; flex-direction:column; align-items:center; gap:16px;
+  opacity:0; transition:opacity 0.8s ease;
+}
+.prize-img {
+  height:clamp(80px,13vh,140px); object-fit:contain;
+  border-radius:10px; box-shadow:0 8px 32px rgba(0,0,0,0.6);
+}
+
+/* ════════════════════════════
+   QUESTION OVERLAY
+════════════════════════════ */
+#q-overlay {
+  position:fixed; inset:0; z-index:100;
+  display:flex; align-items:stretch; justify-content:stretch;
+  opacity:0; pointer-events:none; transition:opacity 0.5s ease;
+}
+#q-overlay.active { opacity:1; pointer-events:all; }
+
+#q-card {
+  background:linear-gradient(160deg,rgba(10,0,35,0.97) 0%,rgba(6,0,20,0.97) 100%);
+  border-top:2px solid rgba(251,191,36,0.25);
+  border-radius:0;
+  padding:clamp(14px,2.5vh,32px) clamp(20px,3vw,52px) clamp(10px,2vh,24px);
+  width:100%; height:100%;
+  box-shadow:none;
+  display:flex; flex-direction:column; align-items:center; gap:clamp(10px,1.5vh,20px);
+  text-align:center; overflow:hidden;
+}
+/* two-column body: media left, content right */
+#q-card-body {
+  display:flex; direction:ltr; gap:clamp(16px,2.5vw,36px);
+  width:100%; flex:1; min-height:0; align-items:stretch;
+}
+#q-media {
+  flex:0 0 44%;
+  border-radius:14px; overflow:hidden;
+  background:rgba(0,0,0,0.5); position:relative;
+}
+#q-media video {
+  width:100%; height:100%; object-fit:cover; border-radius:14px; display:block;
+}
+#q-media img.q-img {
+  width:100%; height:100%; object-fit:cover; border-radius:14px; display:block;
+  object-position:center 0%;
+  animation:imgPanDown 14s ease-in-out forwards;
+}
+@keyframes imgPanDown {
+  from { object-position:center 0%; }
+  to   { object-position:center 100%; }
+}
+#q-content {
+  flex:1; direction:rtl;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:clamp(12px,1.8vh,24px);
+}
+.q-title {
+  font-size:clamp(2rem,4vw,3.5rem); font-weight:900; color:#fbbf24;
+  text-align:center;
+  text-shadow:0 0 24px rgba(251,191,36,0.45);
+}
+
+.q-step {
+  font-size:clamp(0.8rem,1.2vw,1rem); color:rgba(251,191,36,0.65);
+  font-weight:600; letter-spacing:0.12em; text-transform:uppercase;
+}
+.q-million {
+  height:40px; object-fit:contain; opacity:0.7;
+}
+#q-text {
+  font-size:clamp(1.5rem,2.4vw,2.2rem); font-weight:700;
+  color:#fff; line-height:1.6; direction:rtl;
+  flex:1;
+}
+.q-cursor {
+  display:inline-block; width:2px; height:1em;
+  background:#fbbf24; vertical-align:middle;
+  margin-right:2px;
+  animation:blink 0.7s step-end infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* vote buttons */
+.q-vote-row {
+  display:flex; gap:clamp(16px,3vw,48px);
+  align-items:center; justify-content:center;
+  flex-wrap:wrap;
+}
+.q-vote-btn {
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+  background:rgba(255,255,255,0.05);
+  border:2px solid rgba(255,255,255,0.14); border-radius:22px;
+  padding:clamp(16px,2.5vh,30px) clamp(22px,3vw,48px); cursor:pointer; min-width:clamp(160px,18vw,220px);
+  transition:all 0.2s ease; font-family:'Rubik',Arial,sans-serif;
+}
+.q-vote-btn img { height:clamp(70px,11vh,120px); object-fit:contain; }
+.q-vote-btn .vlabel { font-size:clamp(1.1rem,2vw,1.5rem); font-weight:700; color:#fff; }
+.q-vote-btn.kareh-btn:hover { background:rgba(34,197,94,0.12); border-color:#22c55e; }
+.q-vote-btn.lo-btn:hover    { background:rgba(239,68,68,0.12);  border-color:#ef4444; }
+.q-vote-btn.sel-k { background:rgba(34,197,94,0.18); border-color:#22c55e; box-shadow:0 0 22px rgba(34,197,94,0.35); }
+.q-vote-btn.sel-l { background:rgba(239,68,68,0.18);  border-color:#ef4444; box-shadow:0 0 22px rgba(239,68,68,0.35); }
+.q-vote-btn:disabled { cursor:default; }
+
+/* result */
+#q-result {
+  display:none; flex-direction:column; align-items:center; gap:10px;
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.09);
+  border-radius:16px; padding:clamp(14px,2vh,24px) clamp(20px,3vw,40px); width:100%;
+  animation:riseIn 0.5s both;
+}
+#q-result.show { display:flex; }
+.q-badge {
+  font-size:clamp(1.3rem,2.5vw,2rem); font-weight:900; padding:8px 36px; border-radius:40px;
+}
+.q-badge.k { background:rgba(34,197,94,0.18); color:#22c55e; border:1.5px solid #22c55e; }
+.q-badge.l { background:rgba(239,68,68,0.18);  color:#ef4444; border:1.5px solid #ef4444; }
+.q-benny-credit {
+  font-size:clamp(1rem,1.8vw,1.4rem); color:#fbbf24; font-weight:700;
+  letter-spacing:0.02em;
+}
+#q-explain {
+  font-size:clamp(1.1rem,2vw,1.6rem); color:rgba(255,255,255,0.9); line-height:1.7; direction:rtl;
+}
+
+#q-continue {
+  display:none;
+  background:linear-gradient(135deg,#fbbf24,#f59e0b);
+  color:#000; border:none; padding:14px 52px;
+  font-size:1.15rem; font-weight:700; border-radius:50px;
+  cursor:pointer; font-family:'Rubik',Arial,sans-serif;
+  transition:transform 0.15s; animation:riseIn 0.5s both;
+}
+#q-continue.show { display:block; }
+#q-continue:hover { transform:scale(1.05); }
+
+/* media placeholder (thumbnail + button in q-card) */
+.q-media-placeholder {
+  width:100%; height:100%; position:relative;
+  border-radius:14px; overflow:hidden;
+  background:#000;
+}
+.q-media-thumb {
+  position:absolute; inset:0;
+  width:100%; height:100%; object-fit:cover; border-radius:14px;
+  display:block;
+}
+.q-media-overlay {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(0,0,0,0.42); border-radius:14px;
+}
+.q-media-open-btn {
+  background:linear-gradient(135deg,#7c3aed,#4f46e5);
+  color:#fff; border:none; padding:14px 34px;
+  font-size:1.05rem; font-weight:700; border-radius:50px;
+  cursor:pointer; font-family:'Rubik',Arial,sans-serif;
+  box-shadow:0 6px 24px rgba(124,58,237,0.5);
+  transition:transform 0.15s;
+}
+.q-media-open-btn:hover { transform:scale(1.07); }
+
+/* media lightbox popup */
+#media-popup {
+  position:fixed; inset:0; z-index:300;
+  background:rgba(0,0,0,0.92);
+  display:none; align-items:center; justify-content:center;
+}
+#media-popup.open { display:flex; }
+#media-popup-inner {
+  position:relative;
+  width:90vw; height:90vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
+}
+#media-popup video {
+  width:100%; height:calc(90vh - 60px);
+  object-fit:contain; border-radius:12px; outline:none; display:block;
+}
+#media-popup .popup-img {
+  max-width:100%; max-height:calc(90vh - 60px);
+  border-radius:12px; object-fit:contain; display:block;
+}
+#media-popup-close {
+  background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3);
+  color:#fff; font-size:1rem; font-weight:700; padding:9px 32px;
+  border-radius:50px; cursor:pointer; font-family:'Rubik',Arial,sans-serif;
+  transition:background 0.2s; flex-shrink:0;
+}
+#media-popup-close:hover { background:rgba(255,255,255,0.28); }
+
+/* ════════════════════════════
+   END SCREEN
+════════════════════════════ */
+.end-icon { font-size:clamp(3rem,7vw,5.5rem); animation:riseIn 0.7s both, hb 2.5s 1s ease-in-out infinite; }
+.end-title { font-size:clamp(2.5rem,6vw,5.5rem); font-weight:900; color:#fbbf24; text-align:center; animation:riseIn 0.7s 0.2s both;
+  text-shadow:0 0 40px rgba(251,191,36,0.45); }
+.end-sub { font-size:clamp(1rem,2.2vw,1.6rem); color:rgba(255,255,255,0.8); text-align:center;
+  max-width:min(680px,85vw); line-height:1.8; animation:riseIn 0.7s 0.4s both; }
+.end-hearts { font-size:2.5rem; animation:riseIn 0.7s 0.7s both, hb 2s 1.2s ease-in-out infinite; }
+
+/* ════════════════════════════
+   CALIBRATION OVERLAY
+════════════════════════════ */
+#calOverlay{position:fixed;inset:0;background:#080012;z-index:900;display:none;flex-direction:column;align-items:stretch;direction:rtl;font-family:'Rubik',Arial,sans-serif;}
+#calBar{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;background:rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.1);flex-shrink:0;}
+#calTimerDisplay{font-size:1.8rem;font-weight:700;color:#fbbf24;direction:ltr;font-variant-numeric:tabular-nums;}
+#calCounter{font-size:1rem;color:#aaa;}
+#calExitBtn{background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.2);padding:6px 16px;border-radius:6px;cursor:pointer;font-family:'Rubik',Arial,sans-serif;font-size:0.9rem;}
+#calExitBtn:hover{background:rgba(255,255,255,0.2);}
+#calLines{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 40px;gap:12px;overflow:hidden;}
+.cal-prev{font-size:clamp(0.85rem,1.5vw,1.1rem);color:#4caf50;opacity:0.7;text-align:center;}
+.cal-prev span{font-size:0.8em;color:#4caf50;}
+.cal-divider{width:120px;height:1px;background:rgba(255,255,255,0.15);}
+.cal-next-label{font-size:0.85rem;color:#888;text-align:center;}
+#calCurrentLine{font-size:clamp(1.4rem,3.5vw,2.5rem);font-weight:700;color:#fff;text-align:center;line-height:1.4;direction:rtl;background:rgba(251,191,36,0.08);padding:18px 30px;border-radius:12px;border:1px solid rgba(251,191,36,0.25);max-width:900px;}
+#calNextLine{font-size:clamp(1rem,2vw,1.4rem);color:#666;text-align:center;direction:rtl;}
+#calBottom{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px 30px 28px;background:rgba(255,255,255,0.03);border-top:1px solid rgba(255,255,255,0.08);}
+#calHint{font-size:0.85rem;color:#666;}
+#calTapBtn{width:min(500px,90vw);height:80px;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;border:none;border-radius:16px;font-size:1.5rem;font-weight:700;cursor:pointer;font-family:'Rubik',Arial,sans-serif;box-shadow:0 4px 20px rgba(124,58,237,0.5);transition:transform 0.08s;display:flex;align-items:center;justify-content:center;gap:12px;}
+#calTapBtn:active{transform:scale(0.96);}
+#calBackBtn{background:none;border:1px solid rgba(255,255,255,0.2);color:#888;padding:7px 22px;border-radius:8px;cursor:pointer;font-family:'Rubik',Arial,sans-serif;font-size:0.9rem;}
+#calBackBtn:hover{color:#ccc;border-color:rgba(255,255,255,0.4);}
+#calResult{flex:1;display:none;flex-direction:column;align-items:center;justify-content:center;padding:30px;gap:16px;}
+#calResult h2{color:#fbbf24;font-size:1.5rem;}
+#calResult p{color:#aaa;font-size:0.95rem;text-align:center;direction:rtl;}
+#calOutput{width:100%;max-width:750px;height:260px;background:#111;color:#7efb9e;border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:14px;font-family:'Courier New',monospace;font-size:0.8rem;resize:none;direction:ltr;}
+#calCopyBtn{background:#fbbf24;color:#000;border:none;padding:12px 40px;border-radius:50px;font-size:1rem;font-weight:700;cursor:pointer;font-family:'Rubik',Arial,sans-serif;}
+#calCopied{color:#4caf50;font-size:0.9rem;opacity:0;transition:opacity 0.3s;}
+#calCopied.show{opacity:1;}
+
+/* ── SKIP BUTTON ── */
+#btn-skip {
+  position:fixed; bottom:22px; right:22px; z-index:400;
+  background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.65);
+  border:1px solid rgba(255,255,255,0.2); padding:10px 26px;
+  border-radius:50px; font-size:0.95rem; font-weight:600;
+  cursor:pointer; font-family:'Rubik',Arial,sans-serif;
+  backdrop-filter:blur(6px);
+  transition:background 0.2s, color 0.2s, opacity 0.4s;
+  opacity:0; pointer-events:none;
+}
+#btn-skip.visible { opacity:1; pointer-events:all; }
+#btn-skip:hover { background:rgba(255,255,255,0.22); color:#fff; }
+
+/* ── FLASH ── */
+#flash-el{position:fixed;inset:0;z-index:500;background:#fff;opacity:0;pointer-events:none;}
+#flash-el.go{animation:fa 0.45s ease;}
+@keyframes fa{0%,100%{opacity:0}30%{opacity:0.8}}
+
+/* ── CAL TRIGGER ── */
+#cal-trigger{
+  position:fixed;bottom:14px;left:50%;transform:translateX(-50%);
+  color:rgba(255,255,255,0.28);font-size:0.75rem;
+  cursor:pointer;border-bottom:1px dashed rgba(255,255,255,0.2);
+  z-index:85;display:none;transition:color 0.2s;
+}
+#cal-trigger:hover{color:rgba(255,255,255,0.65);}
+#cal-trigger.on{display:block;}
+
+/* ── END BUTTON ── */
+@keyframes endBtnIn{
+  from{opacity:0;transform:translateX(-50%) translateY(30px)}
+  to  {opacity:1;transform:translateX(-50%) translateY(0)}
+}
+#end-btn {
+  position:fixed; bottom:clamp(28px,5vh,60px); left:50%;
+  transform:translateX(-50%);
+  z-index:200; display:none;
+  background:linear-gradient(135deg,#f59e0b,#fbbf24);
+  color:#1a1a2e; font-size:clamp(1.1rem,2.5vw,1.6rem); font-weight:900;
+  border:none; border-radius:50px; padding:clamp(14px,2.2vh,22px) clamp(36px,5vw,64px);
+  cursor:pointer; box-shadow:0 0 32px rgba(251,191,36,0.55);
+}
+#end-btn.show {
+  display:block;
+  animation:endBtnIn 0.7s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+#end-btn:hover { background:linear-gradient(135deg,#fbbf24,#fde68a); box-shadow:0 0 48px rgba(251,191,36,0.8); }
+
+/* ── SHARED ── */
+@keyframes hb{0%,100%{transform:scale(1)}40%{transform:scale(1.15)}}
+
+/* ══ EFFECTS ══════════════════════════════════════ */
+
+/* Sparkle canvas */
+#sparkle-canvas { position:fixed;inset:0;z-index:2;pointer-events:none; }
+
+/* Golden ring flash on slide change */
+#trans-ring {
+  position:fixed; inset:0; z-index:3; pointer-events:none; opacity:0;
+}
+@keyframes transRingAnim {
+  0%   { opacity:0;  box-shadow:inset 0 0 0px  0px rgba(251,191,36,0); }
+  25%  { opacity:1;  box-shadow:inset 0 0 80px 30px rgba(251,191,36,0.22); }
+  100% { opacity:0;  box-shadow:inset 0 0 0px  0px rgba(251,191,36,0); }
+}
+#trans-ring.go { animation:transRingAnim 0.9s ease-out forwards; }
+
+/* Grad overlay gentle breathe */
+@keyframes gradBreathe {
+  0%,100%{opacity:1} 50%{opacity:0.72}
+}
+#grad-overlay { animation:gradBreathe 7s ease-in-out infinite; }
+
+/* Lyric glow pulse when showing */
+@keyframes lyricGlow {
+  0%,100%{box-shadow:0 0 12px rgba(251,191,36,0.25),0 1px 6px rgba(0,0,0,0.9)}
+  50%    {box-shadow:0 0 36px rgba(251,191,36,0.65),0 0 70px rgba(251,191,36,0.2),0 1px 6px rgba(0,0,0,0.9)}
+}
+#subtitle.visible #lyric-text { animation:lyricGlow 2.8s ease-in-out infinite; }
+
+/* Question card bounce entrance */
+@keyframes qCardBounce {
+  0%   { transform:translateY(40px) scale(0.95); opacity:0; }
+  60%  { transform:translateY(-6px) scale(1.01); opacity:1; }
+  80%  { transform:translateY(3px)  scale(0.995); }
+  100% { transform:translateY(0)   scale(1); opacity:1; }
+}
+#q-card.entered { animation:qCardBounce 0.65s cubic-bezier(0.34,1.2,0.64,1) both; }
+
+/* Confetti pieces */
+.cfetti {
+  position:fixed; pointer-events:none; z-index:600;
+  border-radius:2px;
+  animation:cfFall linear forwards;
+}
+@keyframes cfFall {
+  0%   { transform:translateX(var(--dx,0)) translateY(0)     rotate(0deg);   opacity:1; }
+  80%  { opacity:1; }
+  100% { transform:translateX(calc(var(--dx,0)*1.5)) translateY(110vh) rotate(var(--rot,540deg)); opacity:0; }
+}
+
+/* Shooting star that occasionally streaks across */
+#shoot-star {
+  position:fixed; z-index:4; pointer-events:none;
+  width:220px; height:2px;
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.9),rgba(251,191,36,0.6));
+  border-radius:2px; opacity:0;
+  box-shadow:0 0 8px rgba(251,191,36,0.6);
+}
+@keyframes shootAnim {
+  0%   { opacity:0;   transform:translate(0,0)    rotate(var(--sa)); }
+  10%  { opacity:1; }
+  90%  { opacity:0.7; }
+  100% { opacity:0;   transform:translate(var(--sx),var(--sy)) rotate(var(--sa)); }
+}
+#shoot-star.go { animation:shootAnim 0.9s cubic-bezier(0.25,0,0.75,1) forwards; }
+</style>
+</head>
+<body>
+
+<!-- ── BACKGROUND SLOTS ── -->
+<div id="slot-a" class="bg-slot active"></div>
+<div id="slot-b" class="bg-slot"></div>
+
+<!-- ── EFFECTS ── -->
+<canvas id="sparkle-canvas"></canvas>
+<div id="trans-ring"></div>
+<div id="shoot-star"></div>
+<div id="grad-overlay"></div>
+<div id="dim-overlay"></div>
+
+<!-- ── SUBTITLE ── -->
+<div id="subtitle"><span id="lyric-text"></span></div>
+
+<!-- ── CAL TRIGGER ── -->
+<span id="cal-trigger" onclick="enterCal()">⚙ כיוון כתוביות</span>
+
+<!-- ── END BUTTON ── -->
+<button id="end-btn" onclick="goToEvening()">בני בכבודו ובעצמו ◀</button>
+
+<!-- ── SKIP BUTTON ── -->
+<button id="btn-skip" onclick="skipScreen()">דלג ◀◀</button>
+
+<!-- ── FLASH ── -->
+<div id="flash-el"></div>
+
+<!-- ── AUDIO ── -->
+<audio id="main-audio"    src="song/bennybadboy.mp3" preload="auto"></audio>
+<audio id="million-audio" src="song/million.mp3"     preload="auto"></audio>
+<audio id="speech-audio"  src=""                     preload="none"></audio>
+
+<!-- ════════════════════════════════════
+     SCREEN 0 — WELCOME
+════════════════════════════════════ -->
+<div class="screen active" id="screen-welcome">
+  <div id="wlc-l1" class="wlc-logo"></div>
+  <div id="wlc-l2" class="wlc-sub-plain"></div>
+  <div id="wlc-l3" class="wlc-deep"></div>
+  <div id="wlc-btn-wrap">
+    <button class="btn-main" onclick="goScreen('screen-rules')">אז, שנתחיל? &nbsp;◀</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN 1 — RULES
+════════════════════════════════════ -->
+<div class="screen" id="screen-rules">
+  <div id="rl-t"  class="rules-title-big"></div>
+  <div id="rl-l1" class="rules-line"></div>
+  <div id="rl-l2" class="rules-line"></div>
+  <div id="rl-l3" class="rules-line"></div>
+  <div id="rl-hl" class="rules-hl"></div>
+  <div id="rl-l4" class="rules-line"></div>
+  <div id="rl-l5" class="rules-hl"></div>
+  <div id="rl-l6" class="rules-line"></div>
+  <div id="rl-l7" class="rules-line"></div>
+  <div id="rl-l8" class="rules-end"></div>
+  <div class="signs-row" id="rules-signs" style="opacity:0;transition:opacity 0.8s;align-items:center">
+    <div class="sign-card">
+      <img src="imgs/bennylike.png" alt="בני לייק">
+      <div class="label-green">👍 קרה!</div>
+    </div>
+    <div class="sign-card">
+      <img src="imgs/bennymerusak.png" alt="בני מרוסק">
+      <div class="label-red">💀 לא קרה!</div>
+    </div>
+    <button class="btn-main" onclick="goScreen('screen-prize')">הבא &nbsp;◀</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN 2 — PRIZE
+════════════════════════════════════ -->
+<div class="screen" id="screen-prize">
+  <div id="pr-t"  class="prize-title-type"></div>
+  <div id="pr-l1" class="prize-line"></div>
+  <div id="pr-l2" class="prize-line"></div>
+  <div id="pr-l3" class="prize-brand"></div>
+  <div id="pr-l4" class="prize-line"></div>
+  <div id="pr-l5" class="prize-fine-type"></div>
+  <div id="prize-reveal">
+    <img class="prize-img" src="imgs/tus.jpg" alt="TUS Airways">
+    <button class="btn-main" onclick="startShow()">▶ יאללה, מתחילים!</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     QUESTION OVERLAY
+════════════════════════════════════ -->
+<div id="q-overlay">
+  <div id="q-card">
+    <div class="q-step" id="q-step">שאלה 1 מתוך 6</div>
+    <div id="q-card-body">
+      <!-- media panel (left in LTR layout) -->
+      <div id="q-media"><!-- filled by JS --></div>
+      <!-- text + voting panel (right in LTR layout) -->
+      <div id="q-content">
+        <div class="q-title" id="q-title"></div>
+        <div id="q-text"><span class="q-cursor"></span></div>
+        <div class="q-vote-row">
+          <button class="q-vote-btn kareh-btn" id="btn-kareh" onclick="vote('קרה')">
+            <img src="imgs/bennylike.png" alt="קרה">
+            <span class="vlabel">👍 קרה!</span>
+          </button>
+          <button class="q-vote-btn lo-btn" id="btn-lo" onclick="vote('לא קרה')">
+            <img src="imgs/bennymerusak.png" alt="לא קרה">
+            <span class="vlabel">💀 לא קרה!</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="q-result">
+      <div class="q-badge" id="q-badge">קרה!</div>
+      <div class="q-benny-credit">גירסתו של בני:</div>
+      <div id="q-explain"></div>
+    </div>
+    <button id="q-continue" onclick="continueShow()">▶ המשך הסרטון</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     MEDIA LIGHTBOX POPUP
+════════════════════════════════════ -->
+<div id="media-popup">
+  <div id="media-popup-inner">
+    <!-- filled by JS -->
+    <button id="media-popup-close" onclick="closeMediaPopup()">✕ סגור</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     END SCREEN
+════════════════════════════════════ -->
+<div class="screen" id="screen-end">
+  <div class="end-icon">🏆</div>
+  <div class="end-title">זהו! המשחק נגמר</div>
+  <div class="end-sub">
+    מי ענה נכון על הכי הרבה שאלות?<br>
+    מגיע לו פרס מפנק מתנת TUS Airlines ✈️<br><br>
+    תודה שהיכרתם את בני קצת יותר טוב —<br>
+    אפילו אם לא ממש רציתם 😄
+  </div>
+  <div class="end-hearts">💛 &nbsp;💛 &nbsp;💛</div>
+</div>
+
+<!-- ════════════════════════════════════
+     CALIBRATION OVERLAY
+════════════════════════════════════ -->
+<div id="calOverlay">
+  <div id="calBar">
+    <div id="calTimerDisplay">0:00.0</div>
+    <div id="calCounter">שורה 1 מתוך 0</div>
+    <button id="calExitBtn" onclick="exitCal()">✕ יציאה</button>
+  </div>
+  <div id="calMain" style="display:flex;flex-direction:column;flex:1">
+    <div id="calLines">
+      <div class="cal-prev" id="calPrevLine" style="min-height:1.5em"></div>
+      <div class="cal-divider"></div>
+      <div class="cal-next-label">לחץ SPACE כשמתחילה הכתובית ↓</div>
+      <div id="calCurrentLine">—</div>
+      <div id="calNextLine" style="min-height:1.5em"></div>
+    </div>
+    <div id="calBottom">
+      <div id="calHint">לחץ בדיוק כשמופיעה הכתובית</div>
+      <button id="calTapBtn" onclick="calTap()"><span style="font-size:1.8rem">⏎</span> TAP</button>
+      <button id="calBackBtn" onclick="calBack()">↩ חזרה לשורה הקודמת</button>
+    </div>
+  </div>
+  <div id="calResult">
+    <h2>✅ הכיוון הושלם!</h2>
+    <p>העתק את הקוד הבא והחלף את מערך <code>CAPTIONS</code> בקובץ ה-HTML</p>
+    <textarea id="calOutput" readonly spellcheck="false"></textarea>
+    <button id="calCopyBtn" onclick="copyCal()">📋 העתק קוד</button>
+    <span id="calCopied">✓ הועתק!</span>
+    <button onclick="exitCal()" style="background:none;border:1px solid #555;color:#aaa;padding:8px 24px;border-radius:8px;cursor:pointer;font-family:'Rubik',Arial,sans-serif">חזרה</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ─────────────────────────────────────────
+//  CAPTIONS  (calibrate with ⚙ כיוון כתוביות)
+//  Format: [startSec, endSec, "text"]
+// ─────────────────────────────────────────
+// ─────────────────────────────────────────
+//  CAPTIONS — מילות השיר  (כייל עם ⚙ לאחר בדיקה)
+//  כל שורה: [התחלה_שניות, סוף_שניות, "טקסט"]
+//  התזמונים כאן הם הערכה — יש לכייל!
+// ─────────────────────────────────────────
+const CAPTIONS = [
+  [  9.1,  12.4, 'יש לי חבר שקוראים לו בנימין'],
+  [ 12.6,  16.0, 'אבל אני קוראת לו בני'],
+  [ 16.2,  19.3, 'הוא ייצא לפנסיה בעוד כמה ימים'],
+  [ 19.5,  22.7, 'לשבת במרפסת עם חומיינים'],
+  [ 22.9,  26.4, 'יום אחד היה לו רעיון לא שגרתי'],
+  [ 26.6,  29.8, 'הגיע עם חיוך ומוטיבציה'],
+  [ 30.0,  33.6, 'בוא ניקח פינה קטנה וקצת צעצועים'],
+  [ 33.8,  38.4, "ואולי נכתוב למעלה 'סימולציה'"],
+  [ 38.6,  41.2, 'בני בני איש מופלא'],
+  [ 41.4,  45.3, 'עם שלד פלסטיק, טושים וחצי גלולה'],
+  [ 45.5,  48.7, 'בני בני מההתחלה'],
+  [ 48.9,  51.5, 'הרים אימפריה מאפס'],
+  [ 51.7,  56.4, 'איש מופלא'],
+  [ 56.6,  59.3, 'אז איפה מתחילים עם תלמידים בתור רופאים?'],
+  [ 59.5,  62.5, 'אולי קצת החייאה ואינטובציה'],
+  [ 62.7,  66.3, 'אומרים שמשוגע טוב צריך קצת שותפים'],
+  [ 66.5,  69.7, 'מאז זה התדרדר לאסקלציה...'],
+  [ 69.9,  73.2, 'הגיעו כמה חברים, שמחו על החזון'],
+  [ 73.4,  76.6, 'שיחקו עם דבק חם ופנסים'],
+  [ 76.8,  80.4, 'היום זו כבר שפה שלמה ולא רק רעיון'],
+  [ 80.6,  85.1, 'ההסטוריה נכתבה במעשים'],
+  [ 85.3,  87.9, 'בני בני הוא חבר יקר'],
+  [ 88.1,  91.9, 'מנהיג בגובה עיניים ופחות שיער'],
+  [ 92.1,  95.1, 'בני בני אתה נהדר'],
+  [ 95.3,  98.0, 'ובזכותך יש כאן פלא'],
+  [ 98.2, 102.4, 'שנשאר'],
+  [102.6, 106.0, 'בני הוא מורה בחסד ויצירתי'],
+  [106.2, 109.5, 'גם אם הנושא "היפוולמי"'],
+  [109.7, 112.6, 'והשמועה אומרת, אם בכלל זה אמיתי'],
+  [112.8, 116.5, "שהצליח לקבל ת'קוד מחמי"],
+  [116.7, 119.6, 'גם אם יתקלקל ציוד ויש רק עפרונות'],
+  [119.8, 123.0, 'ייצא בסוף שיעור ממש פצצה'],
+  [123.2, 126.7, 'כי יש לו כשרון גם כשאבדו העשתונות'],
+  [126.9, 131.3, 'ללמד עם שלוקים ואבקת כביסה'],
+  [131.5, 134.3, 'בני בני המקסים'],
+  [134.5, 136.1, 'מזל שתתנדב'],
+  [136.3, 138.3, 'כי נרטבו ריסים'],
+  [138.5, 141.7, 'בני בני יא מחולל ניסים'],
+  [141.9, 144.3, 'אוהבים אותך בני'],
+  [144.5, 148.8, 'איש מקסים'],
+  [149.0, 152.0, 'לבני יש כריזמה ורעיונות'],
+  [152.2, 155.6, 'וצוות שילך באש ומים'],
+  [155.8, 159.1, 'גם כשהדברים התפרקו לחתיכות'],
+  [159.3, 164.6, 'החזקת את הכל בשתי ידיים'],
+  [164.8, 167.2, 'בני בני יא אהוב'],
+  [167.4, 169.3, 'אתה הולך קצת לנוח'],
+  [169.5, 171.3, 'וזה די חשוב'],
+  [171.5, 176.2, 'פעם בשבוע נרים מי כרוב!'],
+  [176.4, 179.3, 'מחבקים אותך בני'],
+  [179.5, 184.5, 'כה אהוב'],
+];
+
+// ─────────────────────────────────────────
+//  QUESTIONS  (6 stops in the slideshow)
+//  answer: "קרה" | "לא קרה"
+//  speech: path to mp3 (placeholder)
+// ─────────────────────────────────────────
+const QUESTIONS = [
+  {
+    title: 'שמירה בהפסקות',
+    text: 'בני היה בתורנות שמירה על השירותים באחת מהפסקות חוגי אחה"צ. אלי פשוט עבר לידו וזרק לו את זה על הדרך — ובני לקח את זה ברצינות.',
+    answer: 'קרה',
+    explanation: '',
+    media: 'scene/guard.mp4',
+    mediaType: 'video',
+    speech: 'scene/guard.mp3'
+  },
+  {
+    title: 'מחיאות כפיים לתיק',
+    text: 'אחת האמהות התקשרה לאלי ואמרה שהילד איבד את התיק. אלי שאל את בני האם ראה תיק ובני אמר שלא. אלי לקח תיק שמצא ואמר שהתיק של הילד שאבד עושה צליל אם מוחאים לו כפיים — ובני לא הפסיק למחוא.',
+    answer: 'קרה',
+    explanation: '',
+    media: 'scene/clap.mp4',
+    mediaType: 'video',
+    speech: 'scene/clap.mp3'
+  },
+  {
+    title: 'גנב את הטלסקופ',
+    text: 'באישון לילה, בני חדר לטכנודע וגנב את הטלסקופ. בעקבות האירוע, נכתב שיעור מרתק בחוג אשנב למדע בנושא זיהוי פלילי. השמועה אומרת שעד היום ישנם ילדים עם סיוטים — והגנב עדיין לא אותר.',
+    answer: 'לא קרה',
+    explanation: '',
+    media: 'scene/thief.mp4',
+    mediaType: 'video',
+    speech: 'scene/thief.mp3'
+  },
+  {
+    title: 'שתה קצת יותר מדי',
+    text: 'באחת ממסיבות פורים הוא שתה ושתה ושתה והיה בטוח שיכול לנהוג הביתה. אמילי גנבה לו את המפתחות לרכב. כל הערב הוא לא הפסיק לחפש את המפתחות — עד שהתייאש וחזר הביתה עם חברים. למחרת, אמילי החזירה לו אותם.',
+    answer: 'קרה',
+    explanation: '',
+    media: 'scene/keys.mp4',
+    mediaType: 'video',
+    speech: 'scene/keys.mp3'
+  },
+  {
+    title: 'הטיסה לקפריסין',
+    text: 'בני היה אמור לטוס דרך TUS AIRLINES אך קיבל מאיתנו הודעה פיקטיבית שהטיסה בוטלה. הוא הזמין טיסה מאל-על במקביל. לבסוף ניצל בנס כי קיבל ואוצ\'ר מאל-על על הטיסה.',
+    answer: 'קרה',
+    explanation: '',
+    media: 'scene/tus.png',
+    mediaType: 'image-pan',
+    speech: 'scene/tus.mp3'
+  },
+  {
+    title: 'סימולטור ברכב',
+    text: 'אחד הסימולטורים נלקח מהיחידה הרפואית והוחבא ברכב של בני על ידי אלי ואמילי. כשבני נכנס לאוטו הוא נבהל כל כך שהתחיל לצרוח.',
+    answer: 'קרה',
+    explanation: '',
+    media: 'scene/doll.mp4',
+    mediaType: 'video',
+    speech: 'scene/doll.mp3'
+  },
+];
+
+// ─────────────────────────────────────────
+//  STOP TIMES (seconds into song)
+//  adjust these after knowing song length
+// ─────────────────────────────────────────
+const STOP_TIMES = [37, 52, 85, 131, 164, 185];
+
+// ─────────────────────────────────────────
+//  SLIDESHOW IMAGES
+// ─────────────────────────────────────────
+const TOP_IMGS = [
+  '../imgs/top (1).JPEG','../imgs/top (2).JPEG','../imgs/top (3).JPEG',
+  '../imgs/top (4).JPEG','../imgs/top (5).JPEG','../imgs/top (6).JPEG',
+  '../imgs/top (7).JPEG','../imgs/top (8).JPEG','../imgs/top (9).JPEG',
+  '../imgs/top (10).JPEG','../imgs/top (11).JPEG','../imgs/top (12).JPEG',
+  '../imgs/top (13).JPEG','../imgs/top (14).JPEG','../imgs/top (15).JPEG',
+  '../imgs/top (16).JPEG','../imgs/top (17).JPEG','../imgs/top (18).JPEG',
+  '../imgs/top (19).JPEG','../imgs/top (20).JPEG','../imgs/top (21).JPEG',
+  '../imgs/top (22).JPEG','../imgs/top (23).JPEG','../imgs/top (24).JPEG',
+  '../imgs/top (25).JPEG','../imgs/top (26).JPEG','../imgs/top (27).JPEG',
+  '../imgs/top (28).JPEG','../imgs/top (29).JPEG','../imgs/top (30).JPEG',
+  '../imgs/top (31).JPEG','../imgs/top (32).JPEG','../imgs/top (33).JPEG',
+  '../imgs/top (34).JPEG','../imgs/top (35).JPEG','../imgs/top (36).JPEG',
+  '../imgs/top (37).JPEG','../imgs/top.JPEG',
+];
+const MIDDLE_IMGS = [
+  '../imgs/middle (1).jpg','../imgs/middle (2).JPEG','../imgs/middle (3).JPG',
+  '../imgs/middle (4).JPEG','../imgs/middle (5).JPEG','../imgs/middle (6).JPEG',
+  '../imgs/middle (7).JPEG','../imgs/middle (8).JPEG','../imgs/middle (9).JPEG',
+  '../imgs/middle (10).jpg','../imgs/middle (11).jpg',
+  '../imgs/middle (13).JPEG','../imgs/middle (14).jpg',
+  '../imgs/middle (15).JPEG','../imgs/middle (16).JPEG','../imgs/middle (17).JPEG',
+  '../imgs/middle (18).JPEG','../imgs/middle (19).JPEG','../imgs/middle (20).JPEG',
+  '../imgs/middle (21).JPEG','../imgs/middle (22).JPEG','../imgs/middle (23).JPEG',
+  '../imgs/middle (24).JPG','../imgs/middle (26).JPG','../imgs/middle (27).JPG',
+  '../imgs/middle (29).JPG','../imgs/middle (30).JPEG','../imgs/middle (31).JPG',
+  '../imgs/middle (32).JPEG','../imgs/middle (33).jpg','../imgs/middle (35).JPEG',
+  '../imgs/middle (42).JPEG','../imgs/middle (46).JPEG',
+];
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function buildPlaylist() {
+  const t=[...TOP_IMGS], m=[...MIDDLE_IMGS];
+  shuffle(t); shuffle(m);
+  // interleave: ~1 top for every 3 middle
+  const out=[];
+  let ti=0, mi=0;
+  while(ti<t.length || mi<m.length){
+    if(ti<t.length) out.push(t[ti++]);
+    if(mi<m.length) out.push(m[mi++]);
+    if(mi<m.length) out.push(m[mi++]);
+    if(mi<m.length) out.push(m[mi++]);
+  }
+  return out;
+}
+
+// ─────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────
+const KB_NAMES = ['kb-0','kb-1','kb-2','kb-3','kb-4','kb-5','kb-6','kb-7'];
+let playlist    = [];
+let imgIdx      = 0;
+let kbIdx       = 0;
+let curSlot     = 'a';
+let slideTimer  = null;
+let isQuestion  = false;
+let qIdx        = 0;   // which question we're on (0-based)
+let lyricIdx    = -1;
+let showRunning = false;
+
+const IMG_DUR   = 3000; // ms per image
+
+const mainAudio    = document.getElementById('main-audio');
+const millionAudio = document.getElementById('million-audio');
+const speechAudio  = document.getElementById('speech-audio');
+const subtitleEl   = document.getElementById('subtitle');
+const lyricTextEl  = document.getElementById('lyric-text');
+const dimEl        = document.getElementById('dim-overlay');
+const qOverlay     = document.getElementById('q-overlay');
+const qResult      = document.getElementById('q-result');
+const qContinue    = document.getElementById('q-continue');
+const calTrigger   = document.getElementById('cal-trigger');
+const slots        = { a: document.getElementById('slot-a'), b: document.getElementById('slot-b') };
+
+// ─────────────────────────────────────────
+//  SCREEN NAV
+// ─────────────────────────────────────────
+function goScreen(id) {
+  typeCancelled = true;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if(el) el.classList.add('active');
+  showSkip(INTRO_SCREENS.includes(id));
+  if(id === 'screen-rules') startRulesTypewriter();
+  if(id === 'screen-prize') startPrizeTypewriter();
+}
+
+// ─────────────────────────────────────────
+//  START SHOW
+// ─────────────────────────────────────────
+function startShow() {
+  typeCancelled = true;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  showSkip(false);
+  stopIntroBg();
+  playlist = buildPlaylist();
+  showRunning = true;
+  calTrigger.classList.add('on');
+  mainAudio.currentTime = 0;
+  mainAudio.play().catch(()=>{});
+  advanceSlide();
+}
+
+// ─────────────────────────────────────────
+//  IMAGE POSITION FROM FILENAME
+//  Add TOP / MIDDLE / BOTTOM anywhere in filename to control focus
+// ─────────────────────────────────────────
+function positionFromName(src) {
+  const name = src.toUpperCase();
+  if (name.includes('TOP'))    return 'center 10%';
+  if (name.includes('MIDDLE')) return 'center 50%';
+  if (name.includes('BOTTOM')) return 'center 85%';
+  return 'center 20%'; // default
+}
+
+// ─────────────────────────────────────────
+//  SLIDESHOW (two-slot crossfade)
+// ─────────────────────────────────────────
+function nextSlotName(){ return curSlot==='a'?'b':'a'; }
+
+function nextImg(){
+  if(imgIdx >= playlist.length) imgIdx = 0;
+  return playlist[imgIdx++];
+}
+
+function makeSlideImg(src){
+  const img = document.createElement('img');
+  img.src = src;
+  img.style.objectPosition = positionFromName(src);
+  img.style.setProperty('--dur', (IMG_DUR/1000+1.5)+'s');
+  KB_NAMES.forEach(c=>img.classList.remove(c));
+  void img.offsetWidth;
+  img.classList.add(KB_NAMES[(kbIdx++)%KB_NAMES.length]);
+  return img;
+}
+
+function advanceSlide(){
+  if(!showRunning || isQuestion) return;
+
+  const nxt   = nextSlotName();
+  const nxtEl = slots[nxt];
+  const curEl = slots[curSlot];
+
+  const src1 = nextImg();
+
+  // probe orientation before showing
+  const probe = new Image();
+  probe.onload = () => {
+    nxtEl.innerHTML = '';
+    if(probe.naturalHeight > probe.naturalWidth * 1.15){
+      // portrait — show two side by side
+      const src2 = nextImg();
+      nxtEl.appendChild(makeSlideImg(src1));
+      nxtEl.appendChild(makeSlideImg(src2));
+    } else {
+      // landscape — full width alone
+      nxtEl.appendChild(makeSlideImg(src1));
+    }
+    nxtEl.classList.add('active');
+    curEl.classList.remove('active');
+    curSlot = nxt;
+    flashTransRing();
+    slideTimer = setTimeout(advanceSlide, IMG_DUR);
+  };
+  probe.onerror = () => {
+    nxtEl.innerHTML = '';
+    nxtEl.appendChild(makeSlideImg(src1));
+    nxtEl.classList.add('active');
+    curEl.classList.remove('active');
+    curSlot = nxt;
+    flashTransRing();
+    slideTimer = setTimeout(advanceSlide, IMG_DUR);
+  };
+  probe.src = src1;
+}
+
+function pauseSlide(){
+  clearTimeout(slideTimer);
+  slideTimer = null;
+}
+function resumeSlide(){
+  if(!isQuestion) advanceSlide();
+}
+
+// ─────────────────────────────────────────
+//  AUDIO TIMEUPDATE
+// ─────────────────────────────────────────
+mainAudio.addEventListener('timeupdate', ()=>{
+  if(calActive || !showRunning) return;
+  const t = mainAudio.currentTime;
+
+  // captions
+  updateCaptions(t);
+
+  // question stops
+  if(!isQuestion && qIdx < STOP_TIMES.length && t >= STOP_TIMES[qIdx]){
+    triggerQuestion(qIdx++);
+    return;
+  }
+
+});
+
+mainAudio.addEventListener('ended', endShow);
+
+// ─────────────────────────────────────────
+//  CAPTIONS
+// ─────────────────────────────────────────
+function updateCaptions(t){
+  if(isQuestion){ subtitleEl.classList.remove('visible'); return; }
+  let found = -1;
+  for(let i=0;i<CAPTIONS.length;i++){
+    if(t>=CAPTIONS[i][0]&&t<CAPTIONS[i][1]){found=i;break;}
+  }
+  if(found===lyricIdx) return;
+  lyricIdx=found;
+  if(found===-1){
+    subtitleEl.classList.remove('visible');
+  } else {
+    lyricTextEl.textContent=CAPTIONS[found][2];
+    lyricTextEl.classList.remove('popin');
+    void lyricTextEl.offsetWidth;
+    lyricTextEl.classList.add('popin');
+    subtitleEl.classList.add('visible');
+  }
+}
+
+// ─────────────────────────────────────────
+//  QUESTION
+// ─────────────────────────────────────────
+function triggerQuestion(idx){
+  isQuestion = true;
+  pauseSlide();
+  mainAudio.pause();
+  subtitleEl.classList.remove('visible');
+
+  // dim + show overlay
+  dimEl.classList.add('on');
+  qOverlay.classList.add('active');
+
+  // bounce card entrance
+  const qCard = document.getElementById('q-card');
+  qCard.classList.remove('entered');
+  void qCard.offsetWidth;
+  qCard.classList.add('entered');
+
+  // reset card
+  const q = QUESTIONS[idx];
+  document.getElementById('q-step').textContent = `שאלה ${idx+1} מתוך ${QUESTIONS.length}`;
+  document.getElementById('q-title').textContent = q.title;
+  document.getElementById('q-text').innerHTML = '<span class="q-cursor"></span>';
+  document.getElementById('btn-kareh').disabled = false;
+  document.getElementById('btn-lo').disabled    = false;
+  document.getElementById('btn-kareh').className = 'q-vote-btn kareh-btn';
+  document.getElementById('btn-lo').className    = 'q-vote-btn lo-btn';
+  qResult.classList.remove('show');
+  qContinue.classList.remove('show');
+
+  // load media placeholder: thumbnail background + open button overlay
+  const qMedia = document.getElementById('q-media');
+  qMedia.innerHTML = '';
+  const ph = document.createElement('div');
+  ph.className = 'q-media-placeholder';
+
+  if(q.mediaType === 'video'){
+    // show first frame as thumbnail
+    const thumb = document.createElement('video');
+    thumb.src = q.media;
+    thumb.className = 'q-media-thumb';
+    thumb.muted = true; thumb.playsInline = true; thumb.preload = 'auto';
+    thumb.play().then(() => thumb.pause()).catch(() => {});
+    ph.appendChild(thumb);
+  } else if(q.mediaType === 'image-pan'){
+    const thumb = document.createElement('img');
+    thumb.src = q.media;
+    thumb.className = 'q-media-thumb';
+    thumb.alt = '';
+    ph.appendChild(thumb);
+  }
+
+  const overlay = document.createElement('div');
+  overlay.className = 'q-media-overlay';
+  const openBtn = document.createElement('button');
+  openBtn.className = 'q-media-open-btn';
+  openBtn.textContent = '▶ לתיעוד המלא';
+  openBtn.onclick = () => openMediaPopup(q.media, q.mediaType);
+  overlay.appendChild(openBtn);
+  ph.appendChild(overlay);
+  qMedia.appendChild(ph);
+
+  // play million + speech
+  millionAudio.currentTime = 0;
+  millionAudio.play().catch(()=>{});
+  if(q.speech){
+    speechAudio.src = q.speech;
+    speechAudio.play().catch(()=>{});
+  }
+
+  // typewriter
+  typewrite(document.getElementById('q-text'), q.text, ()=>{});
+}
+
+// RTL typewriter — adds chars to end, RTL direction shows cursor on left
+function typewrite(el, text, onDone){
+  el.innerHTML = '<span class="q-cursor"></span>';
+  let i = 0;
+  const iv = setInterval(()=>{
+    if(i < text.length){
+      // insert text node before cursor
+      const cursor = el.querySelector('.q-cursor');
+      const t = document.createTextNode(text[i++]);
+      el.insertBefore(t, cursor);
+    } else {
+      clearInterval(iv);
+      // remove blinking cursor when done
+      const cursor = el.querySelector('.q-cursor');
+      if(cursor) cursor.style.display='none';
+      if(onDone) onDone();
+    }
+  }, 90);
+}
+
+function vote(choice){
+  const q = QUESTIONS[qIdx - 1];
+
+  // mark selected button
+  document.getElementById('btn-kareh').disabled = true;
+  document.getElementById('btn-lo').disabled    = true;
+  if(choice === 'קרה'){
+    document.getElementById('btn-kareh').classList.add('sel-k');
+  } else {
+    document.getElementById('btn-lo').classList.add('sel-l');
+  }
+
+  // show answer
+  const badge = document.getElementById('q-badge');
+  badge.textContent = q.answer === 'קרה' ? '✅ קרה!' : '❌ לא קרה!';
+  badge.className   = 'q-badge ' + (q.answer === 'קרה' ? 'k' : 'l');
+  document.getElementById('q-explain').textContent = q.explanation;
+  qResult.classList.add('show');
+  qContinue.classList.add('show');
+
+  // confetti burst
+  burstConfetti();
+
+  // stop speech, keep million (or let it loop quietly)
+  speechAudio.pause();
+}
+
+function continueShow(){
+  isQuestion = false;
+  lyricIdx = -1; // force caption re-evaluation after question
+
+  // close popup and clean up media panel
+  closeMediaPopup();
+  const qMediaEl = document.getElementById('q-media');
+  qMediaEl.querySelectorAll('video').forEach(v => { v.pause(); v.src = ''; });
+  qMediaEl.innerHTML = '';
+
+  millionAudio.pause();
+  millionAudio.currentTime = 0;
+
+  qOverlay.classList.remove('active');
+  dimEl.classList.remove('on');
+
+  // after last question — end the show
+  if(qIdx >= QUESTIONS.length){
+    endShow();
+    return;
+  }
+
+  // resume song + slideshow
+  mainAudio.play().catch(()=>{});
+  updateCaptions(mainAudio.currentTime); // force immediate sync without waiting for timeupdate
+  advanceSlide();
+}
+
+// ─────────────────────────────────────────
+//  MEDIA POPUP
+// ─────────────────────────────────────────
+function openMediaPopup(src, type) {
+  const popup = document.getElementById('media-popup');
+  const inner = document.getElementById('media-popup-inner');
+  // remove old media, keep close button
+  inner.querySelectorAll('video, img.popup-img').forEach(el => el.remove());
+  if(type === 'video'){
+    const vid = document.createElement('video');
+    vid.src = src;
+    vid.autoplay = true; vid.controls = true;
+    vid.loop = true; vid.playsInline = true;
+    inner.insertBefore(vid, inner.firstChild);
+    vid.play().catch(()=>{});
+  } else if(type === 'image-pan'){
+    const img = document.createElement('img');
+    img.src = src;
+    img.className = 'popup-img';
+    img.alt = '';
+    inner.insertBefore(img, inner.firstChild);
+  }
+  popup.classList.add('open');
+}
+
+function closeMediaPopup() {
+  const popup = document.getElementById('media-popup');
+  const inner = document.getElementById('media-popup-inner');
+  const vid = inner.querySelector('video');
+  if(vid){ vid.pause(); vid.src = ''; vid.remove(); }
+  inner.querySelectorAll('img.popup-img').forEach(el => el.remove());
+  popup.classList.remove('open');
+}
+
+// ─────────────────────────────────────────
+//  END
+// ─────────────────────────────────────────
+function endShow(){
+  if(!showRunning) return;
+  showRunning = false;
+  pauseSlide();
+  millionAudio.pause();
+  mainAudio.pause();
+  subtitleEl.classList.remove('visible');
+  calTrigger.classList.remove('on');
+
+  // show continue button
+  document.getElementById('end-btn').classList.add('show');
+}
+
+function goToEvening(){
+  window.location.href = '../evening.html?s=6';
+}
+
+// ─────────────────────────────────────────
+//  GENERIC TYPEWRITER
+// ─────────────────────────────────────────
+function colorize(el) {
+  el.innerHTML = el.textContent
+    .replace(/ירוק/g, '<span style="color:#22c55e;font-weight:900">ירוק</span>')
+    .replace(/אדום/g, '<span style="color:#ef4444;font-weight:900">אדום</span>');
+}
+
+let typeCancelled  = false;
+let activeSpeech   = null;
+
+function playSpeech(src) {
+  if (activeSpeech) { activeSpeech.pause(); activeSpeech.src = ''; }
+  activeSpeech = new Audio(src);
+  activeSpeech.play().catch(()=>{});
+}
+function stopSpeech() {
+  if (activeSpeech) { activeSpeech.pause(); activeSpeech.src = ''; activeSpeech = null; }
+}
+
+function typeChain(lines, speed, onDone) {
+  typeCancelled = false;
+  let i = 0;
+  function next() {
+    if (typeCancelled || i >= lines.length) {
+      if (!typeCancelled && onDone) onDone();
+      return;
+    }
+    const { id, text, pause } = lines[i++];
+    const el = document.getElementById(id);
+    if (!el) { setTimeout(next, pause || 200); return; }
+    el.textContent = '';
+    let c = 0;
+    const iv = setInterval(() => {
+      if (typeCancelled) { clearInterval(iv); return; }
+      if (c < text.length) { el.textContent += text[c++]; }
+      else {
+        clearInterval(iv);
+        colorize(el);
+        setTimeout(() => { if (!typeCancelled) next(); }, pause || 200);
+      }
+    }, speed);
+  }
+  next();
+}
+
+// ─────────────────────────────────────────
+//  SKIP BUTTON
+// ─────────────────────────────────────────
+const INTRO_SCREENS = ['screen-welcome','screen-rules','screen-prize'];
+const SKIP_ORDER    = { 'screen-welcome':'screen-rules', 'screen-rules':'screen-prize' };
+const skipBtn       = document.getElementById('btn-skip');
+
+function showSkip(on) { skipBtn.classList.toggle('visible', on); }
+
+function skipScreen() {
+  typeCancelled = true;
+  stopSpeech();
+  const cur = INTRO_SCREENS.find(id =>
+    document.getElementById(id).classList.contains('active')
+  );
+  if (!cur) return;
+  if (SKIP_ORDER[cur]) goScreen(SKIP_ORDER[cur]);
+  else startShow(); // prize screen → start
+}
+
+// ─────────────────────────────────────────
+//  RULES TYPEWRITER
+// ─────────────────────────────────────────
+const RULES_LINES = [
+  { id:'rl-t',  text:'📋 כללי המשחק',                                              pause:420 },
+  { id:'rl-l1', text:'ראשית עליכם לוודא שבידכם יש שני שלטים.',                    pause:180 },
+  { id:'rl-l2', text:'הם בידכם? יופי!',                                            pause:250 },
+  { id:'rl-l3', text:'הנכם עומדים לצפות בסרטון של מסמר הערב שלנו..',              pause:220 },
+  { id:'rl-hl', text:'אך שימו לב!',                                                pause:360 },
+  { id:'rl-l4', text:'מדי פעם הסרטון ייעצר ויעלה סיפור,',                         pause:160 },
+  { id:'rl-l5', text:'עליכם לנחש — האם הסיפור אכן קרה או לא קרה?',               pause:300 },
+  { id:'rl-l6', text:'חושבים שקרה? הרימו את השלט הירוק,',                         pause:160 },
+  { id:'rl-l7', text:'חושבים שלא קרה? הרימו את השלט האדום.',                      pause:180 },
+  { id:'rl-l8', text:'מיד לאחר מכן — תגלו את האמת מפי בני עצמו! 😄',             pause:0   },
+];
+
+function startRulesTypewriter() {
+  RULES_LINES.forEach(l => {
+    const el = document.getElementById(l.id);
+    if(el) el.textContent = '';
+  });
+  document.getElementById('rules-signs').style.opacity = '0';
+
+  playSpeech('speech/2.mp3');
+
+  typeChain(RULES_LINES, 70, () => {
+    document.getElementById('rules-signs').style.opacity = '1';
+  });
+}
+
+// ─────────────────────────────────────────
+//  PRIZE TYPEWRITER
+// ─────────────────────────────────────────
+const PRIZE_LINES = [
+  { id:'pr-t',  text:'🏆 במה זוכים?',                                              pause:400 },
+  { id:'pr-l1', text:'הזוכים המאושרים שיצליחו לענות נכון על כל השאלות',            pause:160 },
+  { id:'pr-l2', text:'יזכו בפרס מפנק במיוחד, מתנת',                               pause:220 },
+  { id:'pr-l3', text:'✈️ TUS AIRWAYS',                                             pause:420 },
+  { id:'pr-l4', text:'כי אצלנו לעולם לא מבטלים טיסות..',                           pause:220 },
+  { id:'pr-l5', text:'לא הבנתם? תבינו בהמשך..',                                   pause:0   },
+];
+
+function startPrizeTypewriter() {
+  PRIZE_LINES.forEach(l => {
+    const el = document.getElementById(l.id);
+    if(el) el.textContent = '';
+  });
+  document.getElementById('prize-reveal').style.opacity = '0';
+
+  playSpeech('speech/3.mp3');
+
+  typeChain(PRIZE_LINES, 78, () => {
+    document.getElementById('prize-reveal').style.opacity = '1';
+  });
+}
+
+// ─────────────────────────────────────────
+//  WELCOME TYPEWRITER
+// ─────────────────────────────────────────
+const WLC_LINES = [
+  { id:'wlc-l1', text:'ברוכים הבאים לבני מאניה!', pause:420 },
+  { id:'wlc-l2', text:'השעשועון שיגרום לכם להכיר את השטויות של בני', pause:280 },
+  { id:'wlc-l3', text:'עוד יותר לעומק.', pause:0 },
+];
+
+function startWelcomeTypewriter() {
+  playSpeech('speech/1.mp3');
+  setTimeout(() => {
+    typeChain(WLC_LINES, 62, () => {
+      document.getElementById('wlc-l3').classList.add('pulsing');
+      const btn = document.getElementById('wlc-btn-wrap');
+      btn.style.opacity = '1'; btn.style.pointerEvents = 'all';
+    });
+  }, 500);
+}
+
+// ─────────────────────────────────────────
+//  CALIBRATION TOOL
+// ─────────────────────────────────────────
+let calActive=false, calIdx=0, calTimes=[], calRafId=null;
+
+const calOverlay  = document.getElementById('calOverlay');
+const calMainEl   = document.getElementById('calMain');
+const calResultEl = document.getElementById('calResult');
+const calTimerEl  = document.getElementById('calTimerDisplay');
+const calCountEl  = document.getElementById('calCounter');
+const calCurEl    = document.getElementById('calCurrentLine');
+const calNxtEl    = document.getElementById('calNextLine');
+const calPrvEl    = document.getElementById('calPrevLine');
+
+// placeholder caption texts for calibration
+const CAL_LINES = CAPTIONS.length > 0
+  ? CAPTIONS.map(c => c[2])
+  : ['כתובית 1 — ערוך ב-CAPTIONS', 'כתובית 2', 'כתובית 3', 'כתובית 4', 'כתובית 5'];
+
+let calSavedTime = 0;
+
+function enterCal(){
+  calActive=true; calIdx=0; calTimes=[];
+  calSavedTime = mainAudio.currentTime; // save current position
+  pauseSlide();
+  calOverlay.style.display='flex';
+  calMainEl.style.display='flex';
+  calResultEl.style.display='none';
+  mainAudio.currentTime=0; mainAudio.play().catch(()=>{});
+  updateCalDisplay(); startCalTimer();
+}
+function exitCal(){
+  calActive=false; cancelAnimationFrame(calRafId);
+  mainAudio.pause();
+  calOverlay.style.display='none';
+  if(showRunning){
+    mainAudio.currentTime = calSavedTime; // restore position
+    mainAudio.play().catch(()=>{});
+    lyricIdx = -1;
+    advanceSlide();
+  } else {
+    mainAudio.currentTime=0;
+  }
+}
+function startCalTimer(){
+  function tick(){
+    const t=mainAudio.currentTime;
+    const m=Math.floor(t/60);
+    const s=(t%60).toFixed(1).padStart(4,'0');
+    calTimerEl.textContent=`${m}:${s}`;
+    calRafId=requestAnimationFrame(tick);
+  }
+  calRafId=requestAnimationFrame(tick);
+}
+function updateCalDisplay(){
+  calCountEl.textContent=`שורה ${calIdx+1} מתוך ${CAL_LINES.length}`;
+  calCurEl.textContent  =calIdx<CAL_LINES.length?CAL_LINES[calIdx]:'—';
+  calNxtEl.textContent  =calIdx+1<CAL_LINES.length?CAL_LINES[calIdx+1]:'';
+  if(calIdx>0&&calTimes[calIdx-1]!==undefined){
+    const t=calTimes[calIdx-1];
+    const m=Math.floor(t/60);
+    const s=(t%60).toFixed(1);
+    calPrvEl.innerHTML=`✓ "${CAL_LINES[calIdx-1]}" <span>@ ${m}:${s.padStart(4,'0')}</span>`;
+  } else { calPrvEl.innerHTML=''; }
+}
+function calTap(){
+  if(!calActive||calIdx>=CAL_LINES.length) return;
+  calTimes[calIdx]=mainAudio.currentTime; calIdx++;
+  if(calIdx>=CAL_LINES.length) showCalResult(); else updateCalDisplay();
+}
+function calBack(){
+  if(calIdx<=0) return; calIdx--;
+  calTimes[calIdx]=undefined;
+  const seekTo=calIdx>0&&calTimes[calIdx-1]!==undefined
+    ?Math.max(0,calTimes[calIdx-1]-1):Math.max(0,mainAudio.currentTime-5);
+  mainAudio.currentTime=seekTo; updateCalDisplay();
+}
+function showCalResult(){
+  cancelAnimationFrame(calRafId);
+  calMainEl.style.display='none'; calResultEl.style.display='flex';
+  const lines=CAL_LINES.map((txt,i)=>{
+    const start=calTimes[i]!==undefined?parseFloat(calTimes[i].toFixed(1)):0;
+    const end  =calTimes[i+1]!==undefined?parseFloat((calTimes[i+1]-0.2).toFixed(1))
+               :(calTimes[i]!==undefined?parseFloat((calTimes[i]+5).toFixed(1)):start+5);
+    return `  [${start.toFixed(1).padStart(5)}, ${end.toFixed(1).padStart(5)}, '${txt}'],`;
+  });
+  document.getElementById('calOutput').value='const CAPTIONS = [\n'+lines.join('\n')+'\n];';
+}
+function copyCal(){
+  const ta=document.getElementById('calOutput'); ta.select();
+  navigator.clipboard.writeText(ta.value).catch(()=>document.execCommand('copy'));
+  const c=document.getElementById('calCopied');
+  c.classList.add('show'); setTimeout(()=>c.classList.remove('show'),2500);
+}
+document.addEventListener('keydown',e=>{
+  if(!calActive) return;
+  if(e.code==='Space'){e.preventDefault();calTap();}
+  if(e.code==='Backspace'){e.preventDefault();calBack();}
+});
+
+// ─────────────────────────────────────────
+//  INTRO BACKGROUND  (image ↔ video loop)
+// ─────────────────────────────────────────
+const INTRO_SEQ = [
+  { t:'img', src:'imgs/bennymania.png', dur:8000 },
+  { t:'vid', src:'1.mp4' },
+];
+let introBgIdx  = 0;
+let introCurSlot = 'a';
+let introBgTimer = null;
+let introBgOn    = true;
+
+function loadIntroBg() {
+  if (!introBgOn) return;
+  const item = INTRO_SEQ[introBgIdx % INTRO_SEQ.length];
+  introBgIdx++;
+  const nxt   = introCurSlot === 'a' ? 'b' : 'a';
+  const nxtEl = slots[nxt];
+  const curEl = slots[introCurSlot];
+  nxtEl.innerHTML = '';
+
+  if (item.t === 'img') {
+    const img = document.createElement('img');
+    img.src = item.src;
+    img.style.setProperty('--dur', '12s');
+    img.classList.add(KB_NAMES[introBgIdx % KB_NAMES.length]);
+    nxtEl.appendChild(img);
+    nxtEl.classList.add('active');
+    curEl.classList.remove('active');
+    introCurSlot = nxt;
+    introBgTimer = setTimeout(loadIntroBg, item.dur);
+  } else {
+    const vid = document.createElement('video');
+    vid.src = item.src;
+    vid.muted = true;
+    vid.playsInline = true;
+    vid.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+    nxtEl.appendChild(vid);
+    vid.addEventListener('canplay', () => {
+      if (!introBgOn) return;
+      vid.play().catch(()=>{});
+      nxtEl.classList.add('active');
+      curEl.classList.remove('active');
+      introCurSlot = nxt;
+    }, { once:true });
+    vid.addEventListener('ended', () => { if (introBgOn) loadIntroBg(); });
+    vid.load();
+  }
+}
+
+function stopIntroBg() {
+  introBgOn = false;
+  clearTimeout(introBgTimer);
+  const vid = document.querySelector('.bg-slot video');
+  if (vid) { vid.pause(); vid.src = ''; }
+}
+
+loadIntroBg();
+
+showSkip(true);
+startWelcomeTypewriter();
+
+// ═══════════════════════════════════════
+//  EFFECTS
+// ═══════════════════════════════════════
+
+// ── Floating sparkles ──
+(function(){
+  const c   = document.getElementById('sparkle-canvas');
+  const ctx = c.getContext('2d');
+  function resize(){ c.width = innerWidth; c.height = innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  class Spark {
+    constructor(){
+      this.x  = Math.random() * c.width;
+      this.y  = c.height + 8;
+      this.r  = Math.random() * 2.2 + 0.5;
+      this.vy = Math.random() * 1.1 + 0.4;
+      this.vx = (Math.random() - 0.5) * 0.7;
+      this.life = 0;
+      this.max  = Math.random() * 160 + 90;
+      this.gold = Math.random() > 0.4;
+    }
+    tick(){
+      this.life++;
+      this.x += this.vx;
+      this.y -= this.vy;
+      const a = Math.sin(Math.PI * this.life / this.max) * 0.75;
+      ctx.globalAlpha = a;
+      ctx.fillStyle   = this.gold ? '#fbbf24' : '#ffffff';
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fill();
+      return this.life < this.max;
+    }
+  }
+
+  const pool = [];
+  function loop(){
+    ctx.clearRect(0, 0, c.width, c.height);
+    if(showRunning && !isQuestion && pool.length < 90 && Math.random() < 0.45)
+      pool.push(new Spark());
+    for(let i = pool.length - 1; i >= 0; i--)
+      if(!pool[i].tick()) pool.splice(i, 1);
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+// ── Golden ring flash on slide transition ──
+const transRing = document.getElementById('trans-ring');
+let shootStarCount = 0;
+function flashTransRing(){
+  transRing.classList.remove('go');
+  void transRing.offsetWidth;
+  transRing.classList.add('go');
+  transRing.addEventListener('animationend', () => transRing.classList.remove('go'), { once: true });
+
+  // every ~6th transition fire a shooting star
+  shootStarCount++;
+  if(shootStarCount % 6 === 0) fireShootStar();
+}
+
+// ── Shooting star ──
+const shootEl = document.getElementById('shoot-star');
+function fireShootStar(){
+  const W = innerWidth, H = innerHeight;
+  const sx = (Math.random() > 0.5 ? 1 : -1) * (W * 0.8 + Math.random() * W * 0.4);
+  const sy = (H * 0.4 + Math.random() * H * 0.5);
+  const angle = -25 + Math.random() * 20;
+  shootEl.style.setProperty('--sx', sx + 'px');
+  shootEl.style.setProperty('--sy', sy + 'px');
+  shootEl.style.setProperty('--sa', angle + 'deg');
+  shootEl.style.left = (Math.random() * W * 0.3) + 'px';
+  shootEl.style.top  = (Math.random() * H * 0.3 + H * 0.05) + 'px';
+  shootEl.classList.remove('go');
+  void shootEl.offsetWidth;
+  shootEl.classList.add('go');
+  shootEl.addEventListener('animationend', () => shootEl.classList.remove('go'), { once: true });
+}
+
+// ── Confetti burst ──
+function burstConfetti(){
+  const colors = ['#fbbf24','#f59e0b','#ef4444','#22c55e','#3b82f6','#a855f7','#fb7185','#ffffff'];
+  const cx = innerWidth / 2, cy = innerHeight * 0.45;
+  for(let i = 0; i < 55; i++){
+    const el  = document.createElement('div');
+    el.className = 'cfetti';
+    const w = Math.random() * 12 + 6;
+    const h = Math.random() * 8  + 4;
+    el.style.width  = w + 'px';
+    el.style.height = h + 'px';
+    el.style.borderRadius = Math.random() > 0.45 ? '50%' : '2px';
+    el.style.background = colors[Math.floor(Math.random() * colors.length)];
+    el.style.left = cx + 'px';
+    el.style.top  = cy + 'px';
+    const dx = (Math.random() - 0.5) * 340;
+    const rot = (Math.random() * 900 + 360) * (Math.random() > 0.5 ? 1 : -1);
+    el.style.setProperty('--dx',  dx  + 'px');
+    el.style.setProperty('--rot', rot + 'deg');
+    el.style.animationDuration = (Math.random() * 1.4 + 1.1) + 's';
+    el.style.animationDelay    = (Math.random() * 0.25) + 's';
+    document.body.appendChild(el);
+    el.addEventListener('animationend', () => el.remove());
+  }
+}
+</script>
+</body>
+</html>
