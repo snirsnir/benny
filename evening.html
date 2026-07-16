@@ -150,6 +150,18 @@ body {
 }
 #btn-back-global.visible { opacity:1; pointer-events:all; }
 
+/* ── MUSIC TOGGLE ── */
+#btn-music {
+  position:fixed; top:18px; right:20px; z-index:400;
+  background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.18);
+  color:#fff; font-size:1.3rem; line-height:1;
+  width:42px; height:42px; border-radius:50%;
+  cursor:pointer; backdrop-filter:blur(6px);
+  display:flex; align-items:center; justify-content:center;
+  transition:background 0.2s, transform 0.15s;
+}
+#btn-music:hover { background:rgba(0,0,0,0.7); transform:scale(1.1); }
+
 /* ── PROGRESS DOTS ── */
 #progress-dots {
   position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
@@ -607,6 +619,9 @@ body {
   <div class="dot"></div>
 </div>
 
+<!-- ── MUSIC TOGGLE ── -->
+<button id="btn-music" onclick="toggleBgMusic()" title="נגן / עצור מוזיקה">🎵</button>
+
 <!-- ── GLOBAL BACK BUTTON ── -->
 <div id="btn-back-global">
   <button class="btn-back" onclick="goBack()">▶▶ חזרה</button>
@@ -701,7 +716,7 @@ body {
         הגיע הזמן לשעשועון!<br>
         האם אתם מכירים את בני כמו שאתם חושבים?
       </div>
-      <a href="bennymania/bennyMania.html" target="_blank"
+      <a href="bennymania/bennyMania.html" target="_blank" onclick="bgMusic.pause(); bgMusicWanted=false; musicBtn.textContent='🔇';"
          style="
            display:inline-block;
            background:linear-gradient(135deg,#7c3aed,#4f46e5);
@@ -1028,6 +1043,9 @@ function onEnter(idx) {
       buildClosingStars();
       break;
   }
+
+  // pause bg music on surprise/video screens, resume on all others
+  applyBgMusic();
 }
 
 function goBack() {
@@ -1094,14 +1112,33 @@ if(!isNaN(_gotoS) && _gotoS > 0 && _gotoS < SCREEN_IDS.length){
 }
 
 // ── Background music — random start position, loop forever ──
-const bgMusic = document.getElementById('bg-music');
-bgMusic.volume = 0.35;
+const bgMusic   = document.getElementById('bg-music');
+const musicBtn  = document.getElementById('btn-music');
+bgMusic.volume  = 0.35;
 
-function startBgMusic() {
+let bgMusicWanted = true;   // user preference
+const MUTE_SCREENS = [2, 3]; // screens where bg music is silenced automatically
+
+function applyBgMusic(){
+  const autoMuted = MUTE_SCREENS.includes(cur);
+  if(bgMusicWanted && !autoMuted){
+    bgMusic.play().catch(() => {});
+  } else {
+    bgMusic.pause();
+  }
+  musicBtn.textContent = bgMusicWanted ? '🎵' : '🔇';
+}
+
+function toggleBgMusic(){
+  bgMusicWanted = !bgMusicWanted;
+  applyBgMusic();
+}
+
+function startBgMusic(){
   if(bgMusic.duration){
     bgMusic.currentTime = Math.random() * bgMusic.duration;
   }
-  bgMusic.play().catch(() => {});
+  applyBgMusic();
 }
 
 bgMusic.addEventListener('loadedmetadata', () => {
