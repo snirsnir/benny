@@ -1088,16 +1088,26 @@ mainAudio.addEventListener('timeupdate', ()=>{
 
 });
 
-mainAudio.addEventListener('ended', endShow);
+mainAudio.addEventListener('ended', ()=>{
+  // trigger last question if song ended before timeupdate caught it
+  if(!isQuestion && qIdx < QUESTIONS.length){
+    triggerQuestion(qIdx++);
+  } else {
+    endShow();
+  }
+});
 
 // ─────────────────────────────────────────
 //  CAPTIONS
 // ─────────────────────────────────────────
+const CAPTION_LEAD = 1.0; // captions appear this many seconds ahead of their timestamp
+
 function updateCaptions(t){
   if(isQuestion){ subtitleEl.classList.remove('visible'); return; }
+  const ct = t + CAPTION_LEAD;
   let found = -1;
   for(let i=0;i<CAPTIONS.length;i++){
-    if(t>=CAPTIONS[i][0]&&t<CAPTIONS[i][1]){found=i;break;}
+    if(ct>=CAPTIONS[i][0]&&ct<CAPTIONS[i][1]){found=i;break;}
   }
   if(found===lyricIdx) return;
   lyricIdx=found;
