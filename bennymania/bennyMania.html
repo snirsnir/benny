@@ -1100,11 +1100,9 @@ mainAudio.addEventListener('ended', ()=>{
 // ─────────────────────────────────────────
 //  CAPTIONS
 // ─────────────────────────────────────────
-const CAPTION_LEAD = 1.0; // captions appear this many seconds ahead of their timestamp
-
 function updateCaptions(t){
   if(isQuestion){ subtitleEl.classList.remove('visible'); return; }
-  const ct = t + CAPTION_LEAD;
+  const ct = t >= 85 ? t + 1.0 : t;
   let found = -1;
   for(let i=0;i<CAPTIONS.length;i++){
     if(ct>=CAPTIONS[i][0]&&ct<CAPTIONS[i][1]){found=i;break;}
